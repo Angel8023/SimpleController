@@ -27,7 +27,7 @@ public class ActionXml {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getclass() {
+	public String getclassLocation() {
 		return classLocation;
 	}
 	public void setClass(String classLocation) {

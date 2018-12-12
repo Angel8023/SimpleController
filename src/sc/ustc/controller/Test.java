@@ -1,5 +1,6 @@
 package sc.ustc.controller;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,22 +14,50 @@ import entity.ResultXml;
 import util.XmlParser;
 
 public class Test {
-	public static void main(String[] args) throws DocumentException{
-		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-
+	public static void main(String[] args) throws DocumentException, ClassNotFoundException{	
+		/*
+		String actionName = "login";
+				
 		String xmlPath = "src/controller.xml";
 		XmlParser xmlParser = new XmlParser(xmlPath);
 		xmlParser.setControllerXml();
 		ControllerXml controllerXml = xmlParser.getControllerXml();
 		
+		
+		boolean isFound = false;
 		//输出xml文件中的数据测试
 		for(ActionXml actionXml : controllerXml.getActionList()){
-			for(ResultXml resultXml : actionXml.getResultList()){
-				System.out.println(resultXml.getName());
-			}
+			if(actionName.equals(actionXml.getName())){
+				isFound = true;		
+				//通过java 反射机制，通过类名获取到java 类
+				System.out.println(Class.forName(actionXml.getclassLocation()));
+				System.out.println(actionXml.getMethod());
+				
+				Class<?> theAction = null;
+				try{
+					//通过java 反射机制，通过类名获取到java 类
+					theAction = Class.forName(actionXml.getclassLocation());
+					//通过java 反射机制，通过类名和方法名获取到对应方法并执行
+					Method method=theAction.getMethod(actionXml.getMethod());
+					//执行对应方法
+					String resultName = (String) method.invoke(theAction.newInstance());
+					//System.out.println(resultName);
+					for(ResultXml resultXml : actionXml.getResultList()){
+						//System.out.println(resultXml.getName());
+						if(resultName!=null && resultName.equals(resultXml.getName())){
+							System.out.println(resultXml.getType()+" : "+resultXml.getValue());
+						}
+					}					
+				}catch(Exception e){
+					e.printStackTrace();					
+				} 
+								
+									
+			}		
 		}
+		if(!isFound) System.out.println("不可识别的 action 请求");
+		*/
 		
-					
 		/*
 		SAXReader reader = new SAXReader();
 		Document document = reader.read(xmlPath);

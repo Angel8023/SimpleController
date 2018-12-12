@@ -6,20 +6,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import util.Xml2Html;
+import org.dom4j.DocumentException;
+
+import entity.ActionXml;
+import entity.ControllerXml;
+import entity.ResultXml;
 import util.XmlParser;
 
 public class SimpleController extends HttpServlet{					
 	private static final long serialVersionUID = 1L;
 	private static final String XML_FILE_NAME = "controller.xml";
-	private XmlParser parser;
+	private XmlParser xmlParser;
 	
 	
 	//通过获取到uri地址，对uri进行分割，得到action的名称
@@ -38,21 +42,60 @@ public class SimpleController extends HttpServlet{
 		String xmlPath = 
 				SimpleController.class.getClassLoader().getResource(XML_FILE_NAME).getPath();
 		System.out.println(xmlPath);
+				
+		xmlParser = new XmlParser(xmlPath);   //用xml文件路径创建对象
 		
-		
-		//parser = new XmlParser(xmlPath);
-		
-		/*
-		String result = ProxyImplAssistant(actionName, request, response);
-		String html = translateResult(result);
-		if (html != null) {
-			response.setContentType("text/html; charset=UTF-8");
-			response.getWriter().write(html);
-		} else {
-			response.sendRedirect(result);
+		//用xml文件装配controller 对象
+		try {
+			xmlParser.setControllerXml();
+		} catch (DocumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		*/
-																																						
+		
+		ControllerXml controllerXml = xmlParser.getControllerXml();
+		boolean isFoundAction = false;   //判断是否能找到指定action
+		boolean isFoundResult = false;
+		//输出xml文件中的数据测试
+		for(ActionXml actionXml : controllerXml.getActionList()){
+			if(actionName.equals(actionXml.getName())){
+				isFoundAction = true;		//找到指定action						
+				Class<?> theAction = null;   
+				try{
+					//通过java 反射机制，通过类名获取到java 类
+					theAction = Class.forName(actionXml.getclassLocation());
+					//通过java 反射机制，通过类名和方法名获取到对应方法并执行
+					Method method=theAction.getMethod(actionXml.getMethod());
+					//执行对应方法
+					String resultName = (String) method.invoke(theAction.newInstance());
+					//System.out.println(resultName);
+					for(ResultXml resultXml : actionXml.getResultList()){
+						//System.out.println(resultXml.getName());
+						if(resultName!=null && resultName.equals(resultXml.getName())){
+							isFoundResult = true;
+							System.out.println(resultXml.getType()+" : "+resultXml.getValue());
+							//判断请求类型是转发还是重定向
+							if("forward".equals(resultXml.getType())){
+								//转发请求								
+								request.setCharacterEncoding("UTF-8");  //设置字符编码
+								request.getRequestDispatcher(resultXml.getValue()).forward(request, response);
+							}else{
+								//对请求进行重定向
+								response.setContentType("text/html;charset=utf-8"); //设置字符编码
+								response.sendRedirect(resultXml.getValue());
+							}
+						}
+					}					
+				}catch(Exception e){
+					e.printStackTrace();					
+				} 															
+			}		
+		}
+		if(!isFoundAction){
+			System.out.println("不可识别的 action 请求");			
+		}else {
+			if(!isFoundResult) System.out.println("没有请求的资源");
+		}																																											
 		/*
 		//第一次实验代码--------------------------
 		//测试		
@@ -70,35 +113,7 @@ public class SimpleController extends HttpServlet{
 		}
 		*/							    
 	}		
-	
-	private String ProxyImplAssistant(String actionName, Object... args) {
-		String result = null;
-		/*
-		Executor executor = new ActionsExecutor(parser, actionName);
-		ActoinProxy h = new ActoinProxy(executor, parser, actionName);
-		Class<?> cls = executor.getClass();
-		Executor proxy = (Executor) Proxy.newProxyInstance(cls.getClassLoader(), cls.getInterfaces(), h);
-		String result = proxy.executeAction(args);
-		*/
-		return result;
-	}
-	
-	
-	private String translateResult(String result) {
-		String rear = "_view.xml";
-		result = result.trim();
-		if (result.endsWith(rear)) {
-			// 获得result对应的文件路径
-			String path = SimpleController.class.getClassLoader().getResource("../../").getPath();
-			String xslFilePath = path + result;
-			// 创建特殊后缀Html文件
-			File file = new File(xslFilePath);
-			return Xml2Html.translateXml2Html(file);
-		} else {
-			return null;
-		}
-	}	
-	
+			
 	//测试用输出流输出页面
 	private void printPage(HttpServletResponse response) throws IOException{		
 		//获取页面输出流
