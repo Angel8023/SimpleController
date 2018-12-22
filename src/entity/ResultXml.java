@@ -1,11 +1,11 @@
 package entity;
 
+//一个ResultXml对象包含自身的多个属性值
 public class ResultXml {
 	private String name;
 	private String type;
 	private String value;
-	
-	
+		
 	public void setAll(String name,String type,String value){
 		this.name = name;
 		this.type = type;
