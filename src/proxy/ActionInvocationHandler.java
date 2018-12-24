@@ -56,7 +56,6 @@ public class ActionInvocationHandler implements InvocationHandler {
 	/*
 	 * 运用java 反射机制，通过InterceptorXml对象中获取到的类名和predo和afterdo方法名 执行predo和afterdo方法
 	 */
-
 	private void preAction() {
 		// TODO Auto-generated method stub
 		// 遍历action中的所有拦截器并执行

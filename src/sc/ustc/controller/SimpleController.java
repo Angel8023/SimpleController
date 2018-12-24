@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.DocumentException;
 
+import entity.ActionLog;
 import entity.ActionXml;
 import entity.ControllerXml;
 import entity.LogXml;
@@ -21,6 +22,7 @@ import proxy.ActionExecute;
 import proxy.ActionInterface;
 import proxy.ActionInvocationHandler;
 import util.ClassReflector;
+import util.LogUtil;
 import util.XmlParser;
 
 public class SimpleController extends HttpServlet {
@@ -28,10 +30,10 @@ public class SimpleController extends HttpServlet {
 	private static final String XML_FILE_NAME = "controller.xml";
 	private XmlParser xmlParser;
 
-	// 创建保存单个action信息的 日志对象
+	/*// 创建保存单个action信息的 日志对象
 	SingleActionLog singleActionLog = SingleActionLog.INSTANCE;
 	// 创建log.xml对象 ,通过单例模式实现，所有的对象维护同一个文件
-	LogXml logXml = LogXml.INSTANCE;
+	LogXml logXml = LogXml.INSTANCE;*/
 
 	// 通过获取到uri地址，对uri进行分割，得到action的名称
 	private String getActionName(HttpServletRequest request) {
@@ -63,6 +65,11 @@ public class SimpleController extends HttpServlet {
 		// List<InterceptorXml> InterceptorXmlList =
 		// xmlParser.getInterceptorXmlList();
 
+		// 创建保存单个action信息的 日志对象
+		//SingleActionLog singleActionLog = SingleActionLog.INSTANCE;
+		// 创建log.xml对象 ,通过单例模式实现，所有的对象维护同一个文件
+		//LogXml logXml = LogXml.INSTANCE;
+
 		boolean isFoundAction = false; // 判断是否能找到指定action
 		boolean isFoundResult = false;
 		// 输出xml文件中的数据测试
@@ -87,14 +94,29 @@ public class SimpleController extends HttpServlet {
 								ActionInterface.class.getClassLoader(), new Class<?>[] { ActionInterface.class },
 								actionHandler);
 						// 代理执行executeAction()的方法
-						resultName = actionProxy.executeAction();
+						resultName = actionProxy.executeAction();												
 					} else {
 						System.out.println("未配置拦截器，直接对请求进行处理");
 						// 通过java 反射机制，通过类名和方法名，执行对应类的对应方法
 						resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod());
 					}
 
-					// 将访问的action信息，写入Log.xml文件中
+					/*
+					//获取log.xml 文件路径
+					String logXmlPath = SimpleController.class.getClassLoader().getResource("log.xml").getPath();
+					System.out.println(logXmlPath);
+					//String logXmlPath = "src/log.xml";
+					// 先获取到历史的日志信息所封装的对象					
+					LogUtil logUtil = new LogUtil(logXmlPath);
+					logUtil.readLog();
+
+					// 将单个action记录到日志中
+					ActionLog actionLog = new ActionLog(singleActionLog);
+					logXml.addAction(actionLog);
+					// 显示日志信息
+					logXml.showLog();
+					// 将日志写入log.xml文件
+					logUtil.writeLog();*/
 
 					// System.out.println(resultName);
 					for (ResultXml resultXml : actionXml.getResultList()) {
