@@ -8,6 +8,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/software_package/Software/解析xml文件需要的jar包/dom4j-1.6.1.jar" sourcepath="C:/Users/ANGEL8~1/AppData/Local/Temp/.org.sf.feeling.decompiler1545531054090/source/dom4j-1.6.1-sources.jar"/>
+	<classpathentry kind="lib" path="/UseSC/WebContent/WEB-INF/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/UseSC/WebContent/WEB-INF/lib/mysql-connector-java-5.1.45-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

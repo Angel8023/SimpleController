@@ -3,16 +3,18 @@ package proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-/*
- * 创建ActionInvocataionHandler类，实现InvocationHandler接口，这个类中持有一个被代理对象的实例target。
- * InvocationHandler中有一个invoke方法，所有执行代理对象的方法都会被替换成执行invoke方法。
- * 再在invoke方法中执行被代理对象target的相应方法。
- * */
 import java.util.List;
 import entity.InterceptorXml;
 import entity.Interceptorref;
 import util.ClassReflector;
 import util.XmlParser;
+
+
+/*
+ * 创建ActionInvocataionHandler类，实现InvocationHandler接口，这个类中持有一个被代理对象的实例target。
+ * InvocationHandler中有一个invoke方法，所有执行代理对象的方法都会被替换成执行invoke方法。
+ * 再在invoke方法中执行被代理对象target的相应方法。
+ * */
 
 public class ActionInvocationHandler implements InvocationHandler {
 	// invocationHandler持有的被代理对象

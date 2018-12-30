@@ -98,11 +98,11 @@ public class SimpleController extends HttpServlet {
 								ActionInterface.class.getClassLoader(), new Class<?>[] { ActionInterface.class },
 								actionHandler);
 						// 代理执行executeAction()的方法
-						resultName = actionProxy.executeAction();
+						resultName = actionProxy.executeAction(request,response);
 					} else {
 						System.out.println("未配置拦截器，直接对请求进行处理");
 						// 通过java 反射机制，通过类名和方法名，执行对应类的对应方法
-						resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod());
+						resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod(),request,response);
 					}
 
 					// System.out.println(resultName);
@@ -119,23 +119,22 @@ public class SimpleController extends HttpServlet {
 							} else {
 								response.setContentType("text/html;charset=utf-8"); // 设置字符编码
 								response.sendRedirect(resultXml.getValue());
-							}							
-							/*// 判断请求类型是转发还是重定向
-							if ("success".equals(resultXml.getName())) {
-								 实验四要求 
-								// 如果result为success的话，则输出html页面
-
-								// 实验三以前，是将请求转发，输出指定的jsp页面
-								// 转发请求
-								// request.setCharacterEncoding("UTF-8"); //
-								// 设置字符编码
-								// request.getRequestDispatcher(resultXml.getValue()).forward(request,
-								// response);
-							} else {
-								// 对请求进行重定向
-								response.setContentType("text/html;charset=utf-8"); // 设置字符编码
-								response.sendRedirect(resultXml.getValue());
-							}*/
+							}
+							/*
+							 * // 判断请求类型是转发还是重定向 if
+							 * ("success".equals(resultXml.getName())) { 实验四要求
+							 * // 如果result为success的话，则输出html页面
+							 * 
+							 * // 实验三以前，是将请求转发，输出指定的jsp页面 // 转发请求 //
+							 * request.setCharacterEncoding("UTF-8"); // //
+							 * 设置字符编码 //
+							 * request.getRequestDispatcher(resultXml.getValue()
+							 * ).forward(request, // response); } else { //
+							 * 对请求进行重定向
+							 * response.setContentType("text/html;charset=utf-8"
+							 * ); // 设置字符编码
+							 * response.sendRedirect(resultXml.getValue()); }
+							 */
 						}
 					}
 				} catch (Exception e) {

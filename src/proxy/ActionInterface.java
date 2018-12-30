@@ -5,5 +5,5 @@ package proxy;
  * */
 
 public interface ActionInterface {
-	public String executeAction();
+	public String executeAction(Object...args);
 }

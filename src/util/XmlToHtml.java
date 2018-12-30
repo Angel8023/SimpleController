@@ -60,7 +60,7 @@ public class XmlToHtml {
 		return strWriter.toString();
 	}
 
-	// 将document按照xsl格式转换成HTML document
+	// 将xml document按照xsl格式转换成HTML document
 	public static Document getHtmlDocumentByXsl(Document document, File file) throws Exception {
 		// 使用JAXP加载xstl
 		TransformerFactory factory = TransformerFactory.newInstance();

@@ -1,4 +1,5 @@
 package proxy;
+
 import entity.ActionXml;
 import entity.SingleActionLog;
 import util.ClassReflector;
@@ -20,12 +21,22 @@ public class ActionExecute implements ActionInterface {
 		
 	//实现executeAction()方法
 	@Override
-	public String executeAction() {
+	public String executeAction(Object...args) {
 		// TODO Auto-generated method stub
 		String resultName = null;		
 		try {
+			//实验四之前，调用的反射机制，方法是不带参数的
 			// 通过java 反射机制，通过类名和方法名获取到对应方法并执行
-			resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod());
+			//resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod());
+			
+			//实验五，通过反射，调用带参数的方法
+			resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod(),args);
+			/*String className = actionXml.getclassLocation();
+			String methodName = actionXml.getMethod();
+			Class<?> cls = Class.forName(className);
+			Method method = cls.getMethod(methodName, HttpServletRequest.class,HttpServletResponse.class);
+			resultName = (String) method.invoke(cls.newInstance(), args);*/
+									
 			// 创建保存单个action信息的 日志对象
 			SingleActionLog singleActionLog = SingleActionLog.INSTANCE;
 			// 将请求名称和返回结果记录到一个action中

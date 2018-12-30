@@ -30,12 +30,7 @@ public class Test {
 		String xmlPath = "src/controller.xml";
 		XmlParser xmlParser = new XmlParser(xmlPath);
 		xmlParser.setControllerXml();
-		ControllerXml controllerXml = xmlParser.getControllerXml();						
-
-		/*// 创建保存单个action信息的 日志对象
-		SingleActionLog singleActionLog = SingleActionLog.INSTANCE;
-		// 创建log.xml对象 ,通过单例模式实现，所有的对象维护同一个文件
-		LogXml logXml = LogXml.INSTANCE;*/
+		ControllerXml controllerXml = xmlParser.getControllerXml();							
 
 		// 第三次实验测试
 		// 输出xml文件中的数据测试
@@ -65,23 +60,7 @@ public class Test {
 						System.out.println("未配置拦截器，直接对请求进行处理");
 						// 通过java 反射机制，通过类名和方法名，执行对应类的对应方法
 						resultName = ClassReflector.executeMethod(actionXml.getclassLocation(), actionXml.getMethod());
-					}
-					/*// 将请求名称和返回结果记录到一个action中
-					singleActionLog.setName(actionName);
-					singleActionLog.setResult(resultName);*/
-
-					/*// 先获取到历史的日志信息所封装的对象
-					String logXmlPath = "src/log.xml";
-					LogUtil logUtil = new LogUtil(logXmlPath);
-					logUtil.readLog();
-
-					// 将单个action记录到日志中
-					ActionLog actionLog = new ActionLog(singleActionLog);
-					logXml.addAction(actionLog);
-					// 显示日志信息
-					logXml.showLog();
-					// 将日志写入log.xml文件
-					logUtil.writeLog();*/
+					}					
 
 					for (ResultXml resultXml : actionXml.getResultList()) {
 						// System.out.println(resultXml.getName());
