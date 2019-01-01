@@ -30,7 +30,7 @@ public class ClassReflector {
 	}
 
 	/*
-	 * 根据类名和方法名还有参数，执行带有两个参数的方法
+	 * 根据类名和方法名还有参数，执行带有参数的方法
 	 */
 	public static String executeMethod(String className, String methodName, Object...args)
 			throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,

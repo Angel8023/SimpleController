@@ -15,7 +15,6 @@ public class UserBean {
 		} else
 			return false;
 	}
-
 	public String getUserId() {
 		return userId;
 	}

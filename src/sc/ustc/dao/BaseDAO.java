@@ -21,6 +21,8 @@ public class BaseDAO {
 		try {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, userName, userPassword);
+			/*if(userName!=null)	connection = DriverManager.getConnection(url, userName, userPassword);
+			else connection = DriverManager.getConnection(url);*/
 			System.out.println("DBS Connection Successful!"); // 如果连接成功 控制台输出
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -44,7 +46,7 @@ public class BaseDAO {
 			if (rs.next()) {
 				userBean.setUserId(rs.getString("userID").trim());
 				userBean.setUserName(rs.getString("userName").trim());
-				userBean.setUserPass(rs.getString("userPass").trim());								
+				userBean.setUserPass(rs.getString("userPass").trim());
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
