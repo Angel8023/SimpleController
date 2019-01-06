@@ -1,20 +1,10 @@
 package bean;
 
-import sc.ustc.dao.UserDAO;
-
 public class UserBean {
 	private String userId;
 	private String userName;
 	private String userPass;
-
-	public boolean signIn() {			
-		UserDAO userDAO = new UserDAO();
-		UserBean userBean = (UserBean) userDAO.queryByName(userName);
-		if (userBean != null) {
-			return userPass.equals(userBean.getUserPass());
-		} else
-			return false;
-	}
+		
 	public String getUserId() {
 		return userId;
 	}
@@ -38,4 +28,10 @@ public class UserBean {
 	public void setUserPass(String userPass) {
 		this.userPass = userPass;
 	}
+
+	@Override
+	public String toString() {
+		return "UserBean [userId=" + userId + ", userName=" + userName + ", userPass=" + userPass + "]";
+	}
+
 }

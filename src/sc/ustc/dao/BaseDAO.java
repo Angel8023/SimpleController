@@ -6,23 +6,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import bean.UserBean;
+import com.sun.javafx.sg.prism.web.NGWebView;
+
+import entity.orMapping.ClassMapping;
+import entity.orMapping.JDBC;
+import util.ClassReflector;
 
 public class BaseDAO {
-	protected String driver;
-	protected String url;
-	protected String userName;
-	protected String userPassword;
+	/*
+	 * protected String driver; protected String url; protected String userName;
+	 * protected String userPassword;
+	 */
+	protected JDBC jdbc;
 	protected Connection connection;
 	protected PreparedStatement ps;
 	protected ResultSet rs;
 
-	public Connection openDBCpnnection() {
+	public Connection openDBConnection() {
+		//从配置文件中获取数据库配置
+		Configuration configuration = new Configuration();
+		jdbc = configuration.getJdbc();				
 		try {
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, userName, userPassword);
-			/*if(userName!=null)	connection = DriverManager.getConnection(url, userName, userPassword);
-			else connection = DriverManager.getConnection(url);*/
+			/*
+			 * Class.forName(driver); 
+			 * connection =DriverManager.getConnection(url, userName, userPassword);
+			 */
+			Class.forName(jdbc.getDriver_class());
+			connection = DriverManager.getConnection(jdbc.getUrl_path(), jdbc.getDb_userName(),
+					jdbc.getDb_userPassword());			
 			System.out.println("DBS Connection Successful!"); // 如果连接成功 控制台输出
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -37,24 +48,37 @@ public class BaseDAO {
 		return connection.isClosed();
 	}
 
-	Object query(String sql) {
-		UserBean userBean = new UserBean();
-		connection = openDBCpnnection();
-		try {
-			ps = connection.prepareStatement(sql);
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				userBean.setUserId(rs.getString("userID").trim());
-				userBean.setUserName(rs.getString("userName").trim());
-				userBean.setUserPass(rs.getString("userPass").trim());
+	public Object query(String sql,ClassMapping clm) {			
+		Class<?> cls = null;
+		Object object = null;
+		try {			
+			cls = Class.forName(clm.getClassName());				
+			//获取到指定类的对象后，获取到该类对象的一个实例，，，，这一句至关重要
+			object = cls.newInstance();						
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		connection = openDBConnection();
+		try {			
+			ps = connection.prepareStatement(sql);			
+			rs = ps.executeQuery();					
+			if (rs.next()) {	
+				//设置id属性
+				ClassReflector.setField(object, clm.getId(), rs.getObject(clm.getId()));				
+				//把查询到的属性值，放入对应的属性中去				
+				for(int i=0;i<clm.getPropertyList().size();i++){						
+					ClassReflector.setField(object, clm.getPropertyList().get(i).getName(),
+							rs.getObject(clm.getPropertyList().get(i).getColumn().trim()));
+				}												
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			closeAll(rs, ps, connection);
-		}
-		return userBean;
+		}		
+		return object;
 	}
 
 	public void closeAll(ResultSet rs, PreparedStatement ps, Connection conn) {
@@ -93,7 +117,7 @@ public class BaseDAO {
 		return false;
 	}
 
-	public String getDriver() {
+	/*public String getDriver() {
 		return driver;
 	}
 
@@ -123,5 +147,5 @@ public class BaseDAO {
 
 	public void setUserPassword(String userPassword) {
 		this.userPassword = userPassword;
-	}
+	}*/
 }
